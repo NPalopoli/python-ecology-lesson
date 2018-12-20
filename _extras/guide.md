@@ -6,18 +6,17 @@ permalink: /guide/
 
 # Challenge solutions
 
-## Install the required workshop packages on Mac OS with Homebrew
-
+## Install the required workshop packages
 
 Please use the instructions in the [Setup](https://datacarpentry.org/python-ecology-lesson/setup.html) document to perform installs. If you encounter setup issues, please file an issue with the tags 'High-priority'.
 
 ## Checking installations.
 
-In the include/scripts directory, you will find a script called check_env.py This checks the functionality of the Anaconda install.
+In the `_include/scripts` directory, you will find a script called check_env.py This checks the functionality of the Anaconda install.
 
 By default, Data Carpentry does not have people pull the whole repository with all the scripts and addenda. Therefore,
 you, as the instructor, get to decide how you'd like to provide this script to learners, if at all.
-To use this, students can navigate into includes/scripts terminal, and execute the following:
+To use this, students can navigate into `_includes/scripts` terminal, and execute the following:
 
 ~~~
 python check_env.py
@@ -27,25 +26,33 @@ python check_env.py
 If learners receive an `AssertionError`, it will inform you how to help them correct this
 installation. Otherwise, it will tell you that the system is good to go and ready for Data Carpentry!
 
-## 00-short-introduction-to-Python
+## 01-short-introduction-to-Python
 
 ### Tuples Challenges
 
-* What happens when you type `a_tuple[2] = 5` vs `a_list[1] = 5`?
+* What happens when you execute `a_list[1] = 5`?
+* What happens when you execute `a_tuple[2] = 5`?
 
 	As a tuple is immutable, it does not support item assignment. Elements in a list can be altered individually.
 
-* Type `type(a_tuple)` into the Python interpreter - what is the object type?
+* What does `type(a_tuple)` tell you about `a_tuple`?
 
 	`tuple`
 
 ### Dictionaries Challenges
-* Can you do reassignment in a dictionary? Give it a try.
 
-Make sure it is also clear that access to 'the second value' is actually just about the key name. Add for example `rev[10] = "ten"` to clarify it is not about the position.
+* Changing dictionaries: 2. Reassign the value that corresponds to the key `2`.
 
-* You should see the following output:
-`{1: 'one', 2: 'two', 3: 'three'}`
+Make sure it is also clear that access to 'the value that corresponds to the key `2`' is actually just about the key name. Add for example `rev[10] = "ten"` to clarify it is not about the position.
+
+~~~
+rev
+~~~
+{: .language-python}
+~~~
+{1: 'one', 2: 'two', 3: 'three'}
+~~~
+{: .output}
 
 ~~~
 rev[2] = "apple-sauce"
@@ -55,13 +62,15 @@ rev[2] = "apple-sauce"
 ~~~
 {1: 'one', 2: 'apple-sauce', 3: 'three'}
 ~~~
-{: .language-python}
+{: .output}
 
 ## 02-starting-with-data
 
-###Bug Note:
-
-Pandas < .18.1 has a bug where surveys_df['weight'].describe() may return a runtime error.
+> ## Important Bug Note
+>
+> In Pandas prior to 0.18.1 there is a bug causing `surveys_df['weight'].describe()` to return
+> a runtime error.
+{: .callout}
 
 ### Dataframe Challenges
 
@@ -162,9 +171,10 @@ Tip: use `.head()` method throughout this lesson to keep your display neater for
 
 ### Selection Challenges
 
-* What happens when you type:
+* What happens when you execute:
 
 	`surveys_df[0:3]`
+	`surveys_df[0:1]` slicing only the first element
 	`surveys_df[:5]` slicing from first element makes 0 redundant
 	`surveys_df[-1:]` you can count backwards
 
@@ -224,7 +234,7 @@ stack_selection.plot(kind='bar', stacked=True)
 ~~~
 {: .language-python}
 
-*Suggestion*: As we now the other values are all Nan values, we could also select all not null values (just preview, more on this in next lesson):
+*Suggestion*: As we know the other values are all Nan values, we could also select all not null values (just preview, more on this in next lesson):
 ~~~
 stack_selection = surveys_df[(surveys_df['sex'].notnull()) &
 					surveys_df["weight"] > 0.][["sex", "weight", "plot_id"]]
@@ -245,13 +255,22 @@ stack_selection.columns = stack_selection.columns.droplevel()
 
 ### Challenge - Changing Types
 
+* Try converting the column `plot_id` to floats using `surveys_df.plot_id.astype("float")`. 
+Then, try converting the contents of the `weight` column to an integer type. 
+What error messages does Pandas give you? What do these errors mean?
+
 Pandas cannot convert types from float to int if the column contains NaN values.
 
 ### Challenge - Counting
-surveys_df.isnull()
 
-If the students have trouble generating the output, or anything happens with that, there is a file
-called "sample output" that contains the data file they should generate.
+* Count the number of missing values per column. Hint: The method `.count()` gives you the number of non-NA observations per column. Try looking to the `.isnull()` method.
+
+~~~
+surveys_df.isnull()
+~~~
+{: .language-python}
+
+If the students have trouble generating the output, or anything happens with that, the folder `sample_output` in this repository contains the file `surveys_complete.csv` with the data they should generate.
 
 ## 05-merging-data
 
@@ -421,13 +440,6 @@ surveys_year = surveys_df[surveys_df.year == year].dropna()
 ~~~
 {: .language-python}
 
-* What happens if there is no data for a year in the sequence (for example, imagine we had used 1976 as the start year in `range`)
-
-~~~
-An empty file with only the headers
-~~~
-{: .output}
-
 * Let's say you only want to look at data from a given multiple of years. How would you modify your loop in order to generate a data file for only every 5th year, starting from 1977?
 
 You could just make a list manually, however, why not check the first and last year making use of the code itself?
@@ -489,9 +501,6 @@ def one_year_csv_writer(this_year, all_data, folder_to_save, root_name):
 {: .language-python}
 Also adapt function `yearly_data_csv_writer` with the additional inputs.
 
-### Additional Functions Challenges
-
-
 * How could you use the function `yearly_data_csv_writer` to create a csv file for only one year? (Hint: think about the syntax for `range`)
 
 Adapt the input arguments, e.g. 1978, 1979.
@@ -532,6 +541,8 @@ NoneType
 yearly_data_arg_test(surveys_df, end_year=2001)
 ~~~
 {: .language-python}
+
+### Functions Modifications Challenges
 
 * Rewrite the `one_year_csv_writer` and `yearly_data_csv_writer` functions to have keyword arguments with default values.
 
@@ -596,7 +607,7 @@ def yearly_data_csv_writer(all_data, yearcolumn="year",
 ~~~
 {: .language-python}
 
-## 07-plotting-with-ggplot
+## 07-visualization-ggplot-python
 
 If the students have trouble generating the output, or anything happens with that, there is a file
 called "sample output" that contains the data file they should have generated in lesson 3.
